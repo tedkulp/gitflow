@@ -297,7 +297,6 @@ cmd_start() {
 	fi
 
 	# create branch
-	echo "git checkout -b $BRANCH $BASE"
 	if ! git checkout -b "$BRANCH" "$BASE"; then
 		die "Could not create feature branch '$BRANCH'"
 	fi
