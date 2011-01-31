@@ -461,7 +461,7 @@ helper_finish_cleanup() {
 	echo "Summary of actions:"
 	echo "- The feature branch '$BRANCH' was merged into '$DEVELOP_BRANCH'"
 	#echo "- Merge conflicts were resolved"		# TODO: Add this line when it's supported
-	if [ gitflow_has_pivotal_configured && "$STORY_ID" != "" ]; then
+	if [[ gitflow_has_pivotal_configured && "$STORY_ID" != "" ]]; then
 		echo "- Story #$STORY_ID was marked as finished in Pivotal Tracker"
 	fi
 	if flag keep; then
