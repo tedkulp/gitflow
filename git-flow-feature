@@ -252,7 +252,7 @@ cmd_start() {
 		
 		# Pull our next story id
 		# TODO: Allow us to pass a story id or an owner name/initials
-		STORY_ID=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories?filter=type%3Afeature%20current_state%3Aunstarted&limit=1" | grep "<id type=\"integer\">" | cut -d \> -f2 | cut -d\< -f1)
+		STORY_ID=$(pivotal_get_story_id "type%3Afeature%20current_state%3Aunstarted")
 		if [ "$STORY_ID" == "" ]; then
 			# If no story is found, ask whether they want to continue on without
 			default_suggestion="N"
@@ -264,7 +264,7 @@ cmd_start() {
 			fi
 		else
 			# Grab the story name -- make sure it's what they want
-			STORY_NAME=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories/$STORY_ID" | grep "<name>" | cut -d \> -f2 | cut -d\< -f1)
+			STORY_NAME=$(pivotal_get_story_name "$STORY_ID")
 			default_suggestion="Y"
 			printf "Use story #$STORY_ID '$STORY_NAME' (Y/N)? [$default_suggestion] "
 			read answer
