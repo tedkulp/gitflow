@@ -437,15 +437,34 @@ helper_finish_cleanup() {
 		git push "$ORIGIN" ":refs/heads/$BRANCH"
 	fi
 	
-	
 	if noflag keep; then
 		git branch -d "$BRANCH"
+	fi
+
+	# See if there is a story id in the branch name
+	STORY_ID=""
+	PIVOTAL_API_KEY=""
+	PIVOTAL_PROJECT_ID=""
+	if [[ "$BRANCH" =~ -([0-9]+)$ ]]; then
+		if [[ "${BASH_REMATCH[1]}" != "" ]]; then
+			STORY_ID="${BASH_REMATCH[1]}"
+		fi
+	fi
+
+	# Have one? Ok, let's attempt to set it to deliver
+	if [[ gitflow_has_pivotal_configured && "$STORY_ID" != "" ]]; then
+		PIVOTAL_PROJECT_ID=$(git config --get pivotal.project-id)
+		PIVOTAL_API_KEY=$(git config --get pivotal.api-token)
+		ret=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X PUT -H "Content-type: application/xml" -d "<story><current_state>finished</current_state></story>" "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories/$STORY_ID")
 	fi
 
 	echo
 	echo "Summary of actions:"
 	echo "- The feature branch '$BRANCH' was merged into '$DEVELOP_BRANCH'"
 	#echo "- Merge conflicts were resolved"		# TODO: Add this line when it's supported
+	if [ gitflow_has_pivotal_configured && "$STORY_ID" != "" ]; then
+		echo "- Story #$STORY_ID was marked as finished in Pivotal Tracker"
+	fi
 	if flag keep; then
 		echo "- Feature branch '$BRANCH' is still available"
 	else
