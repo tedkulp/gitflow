@@ -183,6 +183,12 @@ gitflow_is_initialized() {
 	gitflow_has_prefixes_configured
 }
 
+gitflow_has_pivotal_configured() {
+	git config --get pivotal.api-token >/dev/null 2>&1     && \
+	git config --get pivotal.full-name >/dev/null 2>&1     && \
+	git config --get pivotal.project-id >/dev/null 2>&1	
+}
+
 # loading settings that can be overridden using git config
 gitflow_load_settings() {
 	export DOT_GIT_DIR=$(git rev-parse --git-dir >/dev/null 2>&1)
@@ -314,3 +320,19 @@ require_branches_equal() {
 		fi
 	fi
 }
+
+clean_branch_name() {
+	# TODO: More regex love
+	# replace spaces with underscores
+	CLEAN=${1// /_}
+	# now, clean out anything that's not alphanumeric, a dash or an underscore
+	CLEAN=${CLEAN//[^a-zA-Z0-9_-]/}
+	# remove duplicate _
+	CLEAN=${CLEAN//__/_}
+	# remove duplicate -
+	CLEAN=${CLEAN//--/-}
+	# finally, lowercase with TR
+	CLEAN=`echo $CLEAN | tr A-Z a-z`
+	echo "$CLEAN"
+}
+
