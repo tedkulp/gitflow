@@ -264,8 +264,7 @@ cmd_start() {
 			fi
 		else
 			# Grab the story name -- make sure it's what they want
-			# TODO: Change this to query the story id we have in scope already
-			STORY_NAME=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories?filter=type%3Afeature%20current_state%3Aunstarted&limit=1" | grep "<name>" | cut -d \> -f2 | cut -d\< -f1)
+			STORY_NAME=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories/$STORY_ID" | grep "<name>" | cut -d \> -f2 | cut -d\< -f1)
 			default_suggestion="Y"
 			printf "Use story #$STORY_ID '$STORY_NAME' (Y/N)? [$default_suggestion] "
 			read answer
