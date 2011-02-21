@@ -181,7 +181,9 @@ parse_args() {
 }
 
 parse_base_name () {
-	parse_cmdline "$@"
+	# parse options
+	FLAGS "$@" || exit $?
+	eval set -- "${FLAGS_ARGV}"
 
 	if [ $# -eq 1 ]; then
 		if [[ $1 == "-P" ]]; then
