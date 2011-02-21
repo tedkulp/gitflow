@@ -233,6 +233,8 @@ cmd_start() {
 
 	if ! flag pivotal; then
 		require_name_arg
+	else
+		BASE=$DEVELOP_BRANCH
 	fi
 
 	# sanity checks
