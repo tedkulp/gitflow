@@ -335,14 +335,14 @@ clean_branch_name() {
 pivotal_get_story_id() {
 	FILTER="$1"
 	PIVOTAL_PROJECT_ID=$(git config --get pivotal.project-id)
-	STORY_ID=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories?filter=$FILTER&limit=1" | grep "<id type=\"integer\">" | cut -d \> -f2 | cut -d\< -f1)
+	STORY_ID=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories?filter=$FILTER&limit=1" | grep -m 1 "<id type=\"integer\">" | cut -d \> -f2 | cut -d\< -f1)
 	echo "$STORY_ID"
 }
 
 pivotal_get_story_name() {
 	STORY_ID="$1"
 	PIVOTAL_PROJECT_ID=$(git config --get pivotal.project-id)
-	STORY_NAME=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories/$STORY_ID" | grep "<name>" | cut -d \> -f2 | cut -d\< -f1)
+	STORY_NAME=$(curl -o - -sS -H "X-TrackerToken: $PIVOTAL_API_KEY" -X GET "https://www.pivotaltracker.com/services/v3/projects/$PIVOTAL_PROJECT_ID/stories/$STORY_ID" | grep -m 1 "<name>" | cut -d \> -f2 | cut -d\< -f1)
 	echo "$STORY_NAME"
 }
 
